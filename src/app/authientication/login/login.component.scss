@@ -1,0 +1,28 @@
+.login-conatiner{
+    background-color: #00499b;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    img{width: 100px;}
+    h1{
+        color:white;
+        font-weight: 600;
+        font-size: 3rem;
+        @media (max-width:512px) {font-size: 2rem;}
+        @media (max-width:307px) {font-size: 1.6rem; }
+    }
+    }
+
+
+.card-body{
+    height: 400px !important;
+    margin-top: 7rem;
+    @media (max-width:995px) {
+        margin-top: 0rem !important;
+    }
+}
+.login-btn{
+    background-color: #fc5000 ;
+    border: #fc5000 ;
+    color: #fff ;
+}
