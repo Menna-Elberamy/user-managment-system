@@ -7,6 +7,11 @@ import { SharedModule } from './shared/shared.module';
 import { ProfileModule } from './profile/profile.module';
 import { DashboardModule } from './dashboard/dashboard.module';
 import { AuthienticationModule } from './authientication/authientication.module';
+import { HttpClientModule } from '@angular/common/http';
+import { ToastrModule, ToastrService } from 'ngx-toastr';
+import { UsersState } from './shared/state/user.state';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxsModule } from '@ngxs/store';
 
 @NgModule({
   declarations: [
@@ -18,7 +23,11 @@ import { AuthienticationModule } from './authientication/authientication.module'
     SharedModule,
     ProfileModule,
     DashboardModule,
-    AuthienticationModule
+    AuthienticationModule,
+    HttpClientModule,
+    // ToastrModule.forRoot(),
+    // BrowserAnimationsModule,
+    NgxsModule.forRoot([UsersState])
   ],
   providers: [],
   bootstrap: [AppComponent]
