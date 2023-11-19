@@ -29,15 +29,17 @@
                         aria-describedby="password-addon">
       
                       <button class="btn btn-light ms-0" type="button" id="password-addon"><i class="mdi mdi-eye-outline"></i></button>
-                          <span class="text-danger ms-2"
-                          *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">
-                          This field is required
-                          </span>
+                    </div>
+                    <div>
+                      <span class="text-danger ms-2"
+                      *ngIf="loginForm.get('password')?.hasError('required') && loginForm.get('password')?.touched">
+                      This field is required
+                      </span>
                     </div>
                   </div>
       
                 <div class="mt-3 d-grid">
-                  <button (click)="submit()" [disabled]="loginForm.invalid" class="btn login-btn" type="submit">Log In</button>
+                  <button (click)="submit()" class="btn login-btn" type="submit">Log In</button>
                 </div>
 
               </form>

@@ -12,49 +12,42 @@ import { UsersState } from 'src/app/shared/state/user.state';
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent implements OnInit {
-  loginForm:FormGroup;
-  showLoader:boolean=false;
+  loginForm!:FormGroup;
+  showLoader: boolean = false;
 
   @Select(UsersState.authienticatedUser)
   loginState$!: Observable<userModel>;
 
-  constructor(private fb:FormBuilder,
-              private toaster:ToastrService,
-              private router:Router,
-              private store:Store){
+  constructor(private fb: FormBuilder, private store: Store) {}
 
-   this.loginForm= this.fb.group({
+  ngOnInit(): void {
+    this.createForm();
+    this.loginState$.subscribe((response:any) => {
+      if (response && response.name=='') {
+       this.showLoader=false;
+      }
+    });
+  }
+
+  createForm() {
+    this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
       password: ['', [Validators.required]],
     });
   }
-  
-  
-  ngOnInit(): void {
-    this.loginState$.subscribe((response) => {
-      if (response) {
-        console.log("user state")
-        console.log(response)
-        // this.router.navigate(['/users']);
-      }
-    })
 
-  }
-  submit(){
-    // this.showLoader=true;
-    if (this.loginForm.invalid) {
-      return;
-    } else {
-      // this.toaster.error('Client error', "errorMessage",{timeOut: 3000});
-
+  submit() {
+    if (this.loginForm.valid) {
+      this.showLoader=true;
       this.store.dispatch(new LoginAction(this.loginForm.value));
-
-      // this.router.navigate(['/dashboard']);
+    } 
+    else {
+      this.loginForm.markAllAsTouched()
+      // this.toaster.error('Client error', "errorMessage",{timeOut: 3000});
     }
   }
-
 
 }
