@@ -6,11 +6,20 @@ export class LoginAction {
     constructor(public credentials: userCredential) {}
   }
 
-export class GetUsers {
-    static readonly type = '[userState] GetUsers';
+// export class GetUsers {
+//     static readonly type = '[userState] GetUsers';
+//     constructor() {}
+//   }
+export class SaveAuthintcatedUser {
+    static readonly type = '[userState] SaveAuthintcatedUser';
     constructor() {}
   }
-export class GetAuthintcatedUsers {
-    static readonly type = '[userState] GetAuthintcatedUsers';
-    constructor(public userModel:userModel ) {}
-  }
+
+  export class EditAuthintcatedUser {
+    static readonly type = '[userState] EditAuthintcatedUser';
+    constructor(public user:userModel) {}
+  }  
+  export class DeleteAuthintcatedUser {
+    static readonly type = '[userState] DeleteAuthintcatedUser';
+    constructor(public userId:number) {}
+  }  

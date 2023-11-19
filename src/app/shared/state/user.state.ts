@@ -3,64 +3,142 @@ import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { userModel } from '../models/users.model';
 import { UsersService } from '../services/users.service';
 import { tap, catchError, filter } from 'rxjs';
-import { GetAuthintcatedUsers, LoginAction } from './user.actions';
+import {
+  DeleteAuthintcatedUser,
+  EditAuthintcatedUser,
+  LoginAction,
+  SaveAuthintcatedUser,
+} from './user.actions';
 import { ToastrService } from 'ngx-toastr';
 import { Router } from '@angular/router';
 
+export interface userModelState {
+  data: userModel[];
+  authienticatedUser?: Partial<userModel>;
+}
 @State<string[]>({
   name: 'userState',
-  defaults: []
+  defaults: [],
 })
 @Injectable()
 export class UsersState {
-    constructor(private userService:UsersService,
-                private toaster:ToastrService,
-                private router:Router){}
+  userList: userModel[] = [];
+  constructor(
+    private userService: UsersService,
+    private toaster: ToastrService,
+    private router: Router
+  ) {}
 
-    @Selector()
-    static authienticatedUser(state: userModel) {
-        return state;
-    }
+  @Selector()
+  static authienticatedUser(state: userModelState) {
+    return state.authienticatedUser;
+  }
+  @Selector()
+  static usersState(state: userModelState) {
+    return state.data;
+  }
 
-    
-    @Action(LoginAction)
-    loginAction({ setState, dispatch ,getState}: StateContext<userModel>, { credentials }: LoginAction) {
-      return this.userService.getAllUsers().pipe(
-        tap((response: any) => {
-          const filteredUser = response.filter((user:userModel) => user.email === credentials.email);
-          if (filteredUser.length > 0) {
-            const filteredUsers = filteredUser[0];
-    
-            if (filteredUsers.email === 'Sincere@april.biz') {
-              filteredUsers.role = 'admin';
-            } else {
-              filteredUsers.role = 'user';
-            }
-            this.navigateBasedOnRole( filteredUsers.role);
-        
+  @Action(LoginAction)
+  loginAction(
+    { setState, dispatch, patchState }: StateContext<userModelState>,
+    { credentials }: LoginAction
+  ) {
+    return this.userService.getAllUsers().pipe(
+      tap((response: any) => {
+        this.userList = response;
+        const loggedInUser = response.find(
+          (user: userModel) => user.email === credentials.email
+        );
+        if (loggedInUser) {
+          const authenticatedUser = loggedInUser;
+          if (authenticatedUser.id === 1) {
+            authenticatedUser.role = 'admin';
+          } else {
+            authenticatedUser.role = 'user';
+          }
+          patchState({ authienticatedUser: authenticatedUser });
+          patchState({ data: this.userList });
+          this.navigateBasedOnRole(authenticatedUser.role);
+        } else {
+          this.toaster.error(
+            'Service error',
+            `${credentials.email} is not found`,
+            { timeOut: 3000 }
+          );
+          patchState({authienticatedUser:{name:''}})
         }
-            else{
-                this.toaster.error('Service error', "User not found", { timeOut: 3000 });
-            }
-        dispatch(new GetAuthintcatedUsers(filteredUser))
-        setState(filteredUser)
-        }),
-        catchError((error) => {
-          this.toaster.error('Client error', error.error.error, { timeOut: 3000 });
-          return error;
-        })
-      );
-    }
+      }),
+      catchError((error) => {
+        this.toaster.error('Client error', error.error.error, {
+          timeOut: 3000,
+        });
+        return error;
+      })
+    );
+  }
 
-    private navigateBasedOnRole(role: string): void {
-        if (role === 'admin') {
-          this.router.navigate(['/dashboard']);
-        } 
-        else {
-            this.router.navigate(['/profile']);
+  @Action(EditAuthintcatedUser)
+  editAuthintcatedUser(
+    { getState, patchState }: StateContext<userModelState>,
+    { user }: EditAuthintcatedUser
+  ) {
+    return this.userService.editUser(user).pipe(
+      tap((response: any) => {
+        const state = getState().data;
+        const authedUserstate = getState().authienticatedUser;
+        const updatedUserIndex = state.findIndex(
+          (user: userModel) => user.id == user.id
+        );
+        if (updatedUserIndex != -1) {
+          state[updatedUserIndex] = user;
         }
-      }
+        if(authedUserstate?.id==user.id){
+          patchState({authienticatedUser:user})
+        }
+        patchState({ data: state });
+        this.toaster.success('sucess', 'user updated sucessfully', {
+          timeOut: 3000,
+        });
+      }),
+      catchError((error) => {
+        this.toaster.error('Client error', error.error.error, {
+          timeOut: 3000,
+        });
+        return error;
+      })
+    );
+  }
 
+  @Action(DeleteAuthintcatedUser)
+  deleteAuthintcatedUser(
+    { getState, patchState }: StateContext<userModelState>,
+    { userId }: DeleteAuthintcatedUser
+  ) {
+    return this.userService.deleteUser(userId).pipe(
+      tap((response: any) => {
+        const state = getState().data;
+        const filteredUsers = state.filter(
+          (user: userModel) => user.id != userId
+        );
+        patchState({ data: filteredUsers });
+        this.toaster.success('sucess', 'user deleted sucessfully', {
+          timeOut: 3000,
+        });
+      }),
+      catchError((error) => {
+        this.toaster.error('Client error', error.error.error, {
+          timeOut: 3000,
+        });
+        return error;
+      })
+    );
+  }
 
-
+  private navigateBasedOnRole(role: string): void {
+    if (role === 'admin') {
+      this.router.navigateByUrl('/dashboard');
+    } else {
+      this.router.navigateByUrl('/profile');
+    }
+  }
 }
