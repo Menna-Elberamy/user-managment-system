@@ -8,5 +8,5 @@ export interface userModel{
     role?:string
     company: {
         name: string;
-    }
+    },
 }
