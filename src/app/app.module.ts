@@ -12,6 +12,7 @@ import { ToastrModule, ToastrService } from 'ngx-toastr';
 import { UsersState } from './shared/state/user.state';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxsModule } from '@ngxs/store';
+import { roleGuard } from './shared/guards/role.guard';
 
 @NgModule({
   declarations: [
@@ -25,8 +26,8 @@ import { NgxsModule } from '@ngxs/store';
     DashboardModule,
     AuthienticationModule,
     HttpClientModule,
-    // ToastrModule.forRoot(),
-    // BrowserAnimationsModule,
+    ToastrModule.forRoot(),
+    BrowserAnimationsModule,
     NgxsModule.forRoot([UsersState])
   ],
   providers: [],
