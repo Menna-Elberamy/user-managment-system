@@ -6,6 +6,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { LayoutComponent } from './components/layout/layout.component';
 import { sharedRoutingModule } from './shared-routing.module';
+import { roleGuard } from './guards/role.guard';
 
 
 
@@ -24,6 +25,7 @@ import { sharedRoutingModule } from './shared-routing.module';
   exports:[
     HeaderComponent,
     LoaderComponent
-  ]
+  ],
+  providers:[roleGuard]
 })
 export class SharedModule { }
