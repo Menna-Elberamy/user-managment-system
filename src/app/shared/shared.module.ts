@@ -7,6 +7,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { LayoutComponent } from './components/layout/layout.component';
 import { sharedRoutingModule } from './shared-routing.module';
 import { roleGuard } from './guards/role.guard';
+import { UnauthorizedComponent } from './components/unauthorized/unauthorized.component';
 
 
 
@@ -14,7 +15,8 @@ import { roleGuard } from './guards/role.guard';
   declarations: [
     HeaderComponent,
     LoaderComponent,
-    LayoutComponent
+    LayoutComponent,
+    UnauthorizedComponent
   ],
   imports: [
     CommonModule,

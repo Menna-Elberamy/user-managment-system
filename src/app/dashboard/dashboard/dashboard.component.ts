@@ -35,6 +35,9 @@ export class DashboardComponent implements OnInit{
     this.store.dispatch(new DeleteAuthintcatedUser(id))
   }
   editUser(){
+    if(this.editUserForm.value.id != 1){
+      this.editUserForm.patchValue({'role':'user'})
+    }
     this.store.dispatch(new EditAuthintcatedUser(this.editUserForm.value));
     this.closeModal.nativeElement.click();
   }
@@ -47,7 +50,8 @@ export class DashboardComponent implements OnInit{
       id:[userModel?.id ?? ''],
       name: [userModel?.name ?? ''],
       email: [userModel?.email ?? '', [Validators.email]],
-      phone: [userModel?.phone ?? ''],      
+      phone: [userModel?.phone ?? ''],   
+      role:[userModel?.role ?? 'admin']   
     });
   }
 

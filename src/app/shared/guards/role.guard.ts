@@ -12,8 +12,9 @@ import { ToastrService } from 'ngx-toastr';
 export class roleGuard implements CanActivate {
   @Select(UsersState.authienticatedUser)
   authenticatedUser$!: Observable<userModel>;
-
   authenticatedUser!:userModel;
+  role=localStorage.getItem("role");
+
 
   constructor(private router: Router, private toaster:ToastrService) { 
     this.authenticatedUser$.subscribe((response:any) => {
@@ -30,9 +31,10 @@ export class roleGuard implements CanActivate {
   }
 
   private checkRole(): boolean {
-    if (this.authenticatedUser?.role=='admin') {
+    if (this.authenticatedUser?.role=='admin' || this.role=='admin') {
       return true;
     } else {
+      this.router.navigate(['401-unauthorized']);
       this.toaster.error('Client error', "you don't have permission to access",{timeOut: 3000});
       return false;
     }

@@ -26,7 +26,7 @@ export class ProfileComponent implements OnInit{
     this.setProfileForm();
     this.authenticatedUser$.subscribe((response:any) => {
       if (response) {
-        this.authenticatedUser=response
+        this.authenticatedUser=response !
        this.patchProfileForm(response)
         this.profileForm.disable(); 
       }

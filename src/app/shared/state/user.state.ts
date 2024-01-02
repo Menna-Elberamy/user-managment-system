@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, NgZone } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { userModel } from '../models/users.model';
 import { UsersService } from '../services/users.service';
@@ -26,7 +26,8 @@ export class UsersState {
   constructor(
     private userService: UsersService,
     private toaster: ToastrService,
-    private router: Router
+    private router: Router,
+    private ngZone: NgZone
   ) {}
 
   @Selector()
@@ -59,6 +60,7 @@ export class UsersState {
           patchState({ authienticatedUser: authenticatedUser });
           patchState({ data: this.userList });
           this.navigateBasedOnRole(authenticatedUser.role);
+          localStorage.setItem("role",authenticatedUser.role)
         } else {
           this.toaster.error(
             'Service error',
@@ -135,10 +137,17 @@ export class UsersState {
   }
 
   private navigateBasedOnRole(role: string): void {
-    if (role === 'admin') {
-      this.router.navigateByUrl('/dashboard');
-    } else {
-      this.router.navigateByUrl('/profile');
-    }
+    this.ngZone.run(() => {
+      if (role === 'admin') {
+        this.router.navigateByUrl('/dashboard');
+      } else {
+        this.router.navigateByUrl('/profile');
+      }
+    });
+    // if (role === 'admin') {
+    //   this.router.navigateByUrl('/dashboard');
+    // } else {
+    //   this.router.navigateByUrl('/profile');
+    // }
   }
 }
